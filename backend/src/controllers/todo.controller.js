@@ -68,11 +68,39 @@ const createTodo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, todo, "The todo has been created Successfully"));
 });
 
-const updateTodo = asyncHandler(async (req, res) => {
-  // update post
+// const updateTodo = asyncHandler(async (req, res) => {
+//   // update post
 
+//   const { todoId } = req.params;
+//   const { title, date } = req.body;
+
+//   if (!isValidObjectId(todoId)) {
+//     throw new ApiError(401, "Invalid todoId");
+//   }
+
+//   const todo = await Todo.findByIdAndUpdate(
+//     todoId,
+//     {
+//       title,
+//       date: date,
+//     },
+//     {
+//       new: true,
+//     }
+//   );
+
+//   if (!todo) {
+//     throw new ApiError(401, "Error while updating the todo");
+//   }
+
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, todo, "Post has been updated successfully"));
+// });
+
+const updateTodo = asyncHandler(async (req, res) => {
   const { todoId } = req.params;
-  const { title, date } = req.body;
+  const { todoName, date, status } = req.body;
 
   if (!isValidObjectId(todoId)) {
     throw new ApiError(401, "Invalid todoId");
@@ -80,13 +108,8 @@ const updateTodo = asyncHandler(async (req, res) => {
 
   const todo = await Todo.findByIdAndUpdate(
     todoId,
-    {
-      title,
-      date: date,
-    },
-    {
-      new: true,
-    }
+    { todoName, date, status },
+    { new: true }
   );
 
   if (!todo) {
@@ -95,7 +118,7 @@ const updateTodo = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, todo, "Post has been updated successfully"));
+    .json(new ApiResponse(200, todo, "Todo has been updated successfully"));
 });
 
 const deleteTodo = asyncHandler(async (req, res) => {
@@ -117,5 +140,4 @@ const deleteTodo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, todo, "Todo has been deleted Successfully"));
 });
 
-// export { getAllTodoById, getAllTodo, createTodo, updateTodo, deleteTodo };
 export { getAllTodoById, getAllTodo, createTodo, updateTodo, deleteTodo };

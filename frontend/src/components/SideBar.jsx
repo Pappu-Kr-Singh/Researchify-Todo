@@ -28,15 +28,6 @@ function SideBar({ isAuthenticated }) {
         </Link>
         <hr />
         <ul className="nav nav-pills flex-column mb-auto">
-          <li className="nav-item">
-            <Link to={"/"} className="nav-link  fw-bold " aria-current="page">
-              <svg className="bi pe-none me-2" width="16" height="16">
-                <use xlinkHref="#home"></use>
-              </svg>
-              Home
-            </Link>
-          </li>
-
           {!currentUser ? (
             <>
               <li className="nav-item">
@@ -58,11 +49,14 @@ function SideBar({ isAuthenticated }) {
             </>
           ) : (
             <li className="nav-item">
-              <Link to="/profile" className="nav-link ">
+              <Link
+                to="/profile"
+                className="nav-link border-bottom border-dark"
+              >
                 <svg className="bi pe-none me-2" width="16" height="16">
                   <use xlinkHref="#people-circle"></use>
                 </svg>
-                profile
+                Profile
               </Link>
             </li>
           )}

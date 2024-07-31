@@ -71,19 +71,12 @@ const Header = () => {
             <form
               className="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3 search__input"
               role="search"
-            >
-              {/* <input
-                type="search"
-                className="form-control bg-light text-black "
-                placeholder="Search..."
-                aria-label="Search"
-              /> */}
-            </form>
+            ></form>
 
             <div className="dropdown text-end">
               <a
                 href="#"
-                className="d-block link-body-emphasis text-decoration-none dropdown-toggle text-white"
+                className="d-block link-body-emphasis text-decoration-none dropdown-toggle text-black text-capitalize font-weight-bold"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >

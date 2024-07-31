@@ -3,17 +3,11 @@ import { AuthContext } from "../context/authContext";
 import axios from "axios";
 import WelcomeMessage from "./WelcomeMessage";
 
-import { useNavigate } from "react-router-dom";
-
 const Profile = () => {
   const { currentUser } = useContext(AuthContext);
   const [fetching, setFetching] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [postImg, setPostImg] = useState([]);
-  const [post, setPost] = useState({ title: "", description: "" });
-
-  // console.log(currentUser.data.user._id);
+  const [todos, setTodos] = useState([]);
+  const [filter, setFilter] = useState("All");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,14 +17,13 @@ const Profile = () => {
           `http://localhost:3000/api/v1/todos/${currentUser.data.user._id}`,
           {
             headers: {
-              Authorization: `Bearer ${currentUser?.data.accessToken}`, // Use access token
+              Authorization: `Bearer ${currentUser?.data.accessToken}`,
             },
           }
         );
 
         const jsonData = response.data.data;
-        // console.log(jsonData);
-        setPosts(jsonData);
+        setTodos(jsonData);
         setFetching(false);
       } catch (error) {
         console.error("Fetch error:", error);
@@ -42,20 +35,57 @@ const Profile = () => {
     fetchData();
   }, [currentUser]);
 
-  const handleDelete = async (postId) => {
+  const handleDelete = async (todoId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/v1/todos/${postId}`, {
+      await axios.delete(`http://localhost:3000/api/v1/todos/${todoId}`, {
         headers: {
           Authorization: `Bearer ${currentUser?.data.accessToken}`,
         },
       });
-      setPosts(posts.filter((post) => post._id !== postId));
+      setTodos(todos.filter((todo) => todo._id !== todoId));
     } catch (error) {
       console.error("Delete error:", error);
     }
   };
 
-  const navigate = useNavigate();
+  const handleStatusChange = async (todoId, newStatus) => {
+    try {
+      await axios.patch(
+        `http://localhost:3000/api/v1/todos/${todoId}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${currentUser?.data.accessToken}`,
+          },
+        }
+      );
+      setTodos(
+        todos.map((todo) =>
+          todo._id === todoId ? { ...todo, status: newStatus } : todo
+        )
+      );
+    } catch (error) {
+      console.error("Status update error:", error);
+    }
+  };
+
+  const filteredTodos = todos.filter((todo) => {
+    if (filter === "All") return true;
+    return todo.status === filter;
+  });
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "green";
+      case "in-progress":
+        return "yellow";
+      case "Postponed":
+        return "red";
+      default:
+        return "white";
+    }
+  };
 
   return (
     <>
@@ -83,31 +113,66 @@ const Profile = () => {
       <hr />
 
       <h1 className="text-center text-black">Your Todo</h1>
+
+      <div className="filter">
+        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <option value="All">All tasks</option>
+          <option value="Completed">Completed</option>
+          <option value="in-progress">In Progress</option>
+          <option value="Postponed">Postponed</option>
+          <option value="Canceled">Canceled</option>
+        </select>
+      </div>
+
       <div className="your__post">
-        {/* {!fetching && posts.length === 0 && <WelcomeMessage />} */}
         {fetching ? (
           <p>Loading...</p>
         ) : (
-          posts.map((post) => (
+          filteredTodos.map((todo) => (
             <div
               className="card post-card"
-              style={{ width: "20rem", margin: "2rem 0rem" }}
-              key={post._id}
+              style={{
+                width: "35rem",
+                margin: "2rem 0rem",
+                backgroundColor: getStatusColor(todo.status),
+              }}
+              key={todo._id}
             >
               <div className="card-body ">
                 <h5 className="card-title text-white bg-transparent ">
-                  {post.todoName}
+                  {todo.todoName}
                 </h5>
                 <p className="card-text text-white bg-transparent ">
-                  {post.date}
+                  {todo.date}
                 </p>
 
                 <div className="deleteNupdata_btn bg-transparent">
                   <button
                     className="btn-danger text-white bg-danger rounded"
-                    onClick={() => handleDelete(post._id)}
+                    onClick={() => handleDelete(todo._id)}
                   >
                     Delete
+                  </button>
+
+                  <button
+                    className="btn-danger text-white bg-success rounded"
+                    onClick={() => handleStatusChange(todo._id, "Completed")}
+                  >
+                    Mark as Completed
+                  </button>
+
+                  <button
+                    className="btn-danger text-white bg-dark rounded"
+                    onClick={() => handleStatusChange(todo._id, "Postponed")}
+                  >
+                    Mark as Postponed
+                  </button>
+
+                  <button
+                    className="btn-danger text-white bg-info rounded"
+                    onClick={() => handleStatusChange(todo._id, "in-progress")}
+                  >
+                    Mark as In Progress
                   </button>
                 </div>
               </div>
@@ -115,56 +180,6 @@ const Profile = () => {
           ))
         )}
       </div>
-
-      {selectedPost && (
-        <form onSubmit={handleUpdateSubmit} className="update-form">
-          <h3>Update Post</h3>
-          <div className="form-group">
-            <label htmlFor="postId">Post Id</label>
-            <input
-              type="text"
-              id="postId"
-              value={post._id}
-              onChange={(e) => setPost({ ...post, postId: e.target.value })}
-              defaultValue={selectedPost._id}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            <input
-              type="text"
-              id="title"
-              value={post.title}
-              onChange={(e) => setPost({ ...post, title: e.target.value })}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="description">Description</label>
-            <textarea
-              id="description"
-              value={post.description}
-              onChange={(e) =>
-                setPost({ ...post, description: e.target.value })
-              }
-              required
-            ></textarea>
-          </div>
-          <div className="form-group">
-            <label htmlFor="postImg">Image</label>
-            <input
-              type="file"
-              id="postImg"
-              onChange={(e) => setPostImg(e.target.files[0])}
-            />
-          </div>
-          <button type="submit">Update</button>
-          <button type="button" onClick={() => setSelectedPost(null)}>
-            Cancel
-          </button>
-        </form>
-      )}
     </>
   );
 };

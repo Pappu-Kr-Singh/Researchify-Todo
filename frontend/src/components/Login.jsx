@@ -39,7 +39,7 @@ const Login = () => {
       // console.log(response.data);
       alert("Login Successful");
       updateUser(response.data);
-      navigate("/"); // Redirect to the home page
+      navigate("/profile"); // Redirect to the home page
     } catch (error) {
       if (error.response) {
         const { status, data } = error.response;

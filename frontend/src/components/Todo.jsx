@@ -3,7 +3,7 @@ const Todo = ({ todo }) => {
   return (
     <div
       className="card post-card"
-      style={{ width: "15rem", margin: "2rem 0rem" }}
+      style={{ width: "20rem", margin: "2rem 0rem" }}
     >
       <div className="card-body ">
         <h5 className="card-title text-white bg-transparent">

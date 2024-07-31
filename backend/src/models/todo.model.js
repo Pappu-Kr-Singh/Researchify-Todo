@@ -15,6 +15,11 @@ const todoSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    status: {
+      type: String,
+      enum: ["Completed", "in-progress", "Canceled", "Postponed"],
+      default: "in-progress",
+    },
   },
   { timestamps: true }
 );

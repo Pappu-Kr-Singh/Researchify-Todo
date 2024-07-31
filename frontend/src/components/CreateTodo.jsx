@@ -46,7 +46,7 @@ const CreateTodo = () => {
       // console.log(response.data);
       alert("Todo Created Successfully");
 
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       console.error("Error during creating todo:", error.response.data);
       alert("Error creating todo, please try again.");
@@ -113,7 +113,7 @@ const CreateTodo = () => {
             onChange={handleChange}
           />
         </div>
-        <button type="submit" className="btn btn-secondary">
+        <button type="submit" className="btn btn-info">
           Add Todo
         </button>
       </form>
