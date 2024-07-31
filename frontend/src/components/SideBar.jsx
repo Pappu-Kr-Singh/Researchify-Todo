@@ -19,7 +19,7 @@ function SideBar({ isAuthenticated }) {
         style={{ width: "320px" }}
       >
         <Link
-          to={"/"}
+          to={"/create-todo"}
           className="d-flex align-items-center mb-3 mb-md-0 me-md-auto  text-decoration-none"
         >
           <div className="fs-4 ">
